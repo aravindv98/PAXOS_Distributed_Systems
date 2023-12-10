@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -57,6 +58,10 @@ public class AbstractServerFunctionClass extends RemoteObject implements Propose
   }
   public synchronized int prepare(int proposalId) throws RemoteException {
     // Implement Paxos prepare logic here
+    // Below three lines is for simulating a failure in one of the acceptors during the prepare stage.
+//    this.failure();
+//    if(this.isPromised==false)
+//      return 0;
     if(proposalId>this.currentSequenceNumber){
       this.currentSequenceNumber = proposalId;
       this.isPromised = true;
@@ -261,6 +266,22 @@ public class AbstractServerFunctionClass extends RemoteObject implements Propose
   }
   public synchronized String getResponse() throws RemoteException {
     return this.response;
+  }
+  public void failure() {
+    Random random = new Random();
+
+    while (true) {
+      try {
+        // Simulate random failures by sleeping for a random period
+        Thread.sleep(random.nextInt(5000) + 3000); // Sleep for 3 to 8 seconds
+
+        // Simulate restarting the acceptor thread
+        isPromised = false;
+        System.out.println("Acceptor thread restarted.");
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
   }
   private static class Operation implements Serializable{
     String clientMessage;

@@ -12,8 +12,8 @@ import java.util.Scanner;
 public class Client extends AbstractClientFunctionClass{
   public static void main(String[] args){
     try {
-      String serverAddress = "localhost";
-      int clientPort = 3001;
+      String serverAddress = args[0];
+      int clientPort = Integer.valueOf(args[1]);
       Registry registry = LocateRegistry.getRegistry(serverAddress, clientPort);
       // Get the required object to access the server methods.
       RMIServer stub = (RMIServer) registry.lookup("RMIServer"+clientPort);

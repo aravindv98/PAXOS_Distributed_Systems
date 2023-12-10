@@ -9,7 +9,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class Server{
   public static void main(String[] args) {
     // Port number is taken from the terminal argument.
-    int portNumber = 3000;
+    int portNumber = Integer.valueOf(args[0]);
     // Starting the server.
     try  {
       int numServers = 5; // Total number of servers

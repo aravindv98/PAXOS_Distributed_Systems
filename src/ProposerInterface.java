@@ -16,6 +16,16 @@ public interface ProposerInterface extends Remote {
    * @throws RemoteException If a remote invocation error occurs.
    */
   void propose(int proposalId, Object proposalValue) throws RemoteException, NotBoundException;
+
+  /**
+   * Method called by the client to initiate the proposal and setting the operation
+   * @param clientMessage
+   * @param serverResponse
+   * @param clientAddress
+   * @param clientPort
+   * @throws RemoteException
+   * @throws NotBoundException
+   */
   void proposeOperation(String clientMessage, String serverResponse,
                         String clientAddress, String clientPort) throws RemoteException, NotBoundException;
 }

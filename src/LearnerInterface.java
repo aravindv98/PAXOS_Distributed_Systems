@@ -16,5 +16,11 @@ public interface LearnerInterface extends Remote {
    * @throws RemoteException If a remote invocation error occurs.
    */
   void learn(int proposalId, Object acceptedValue) throws RemoteException, NotBoundException;
+
+  /**
+   * To set the proposal value that is agreed upon.
+   * @param proposalValue
+   * @throws RemoteException
+   */
   void setProposalValue(Object proposalValue) throws RemoteException;
 }
