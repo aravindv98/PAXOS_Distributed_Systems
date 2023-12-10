@@ -1,39 +1,39 @@
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Arrays;
+import java.rmi.server.UnicastRemoteObject;
 
 /**
  * An RMI Server to implement the remote RMI interface and extend the abstract
  * server implementation class.
  */
-public class Server {
+public class Server{
   public static void main(String[] args) {
+    // Port number is taken from the terminal argument.
+    int portNumber = 3000;
     // Starting the server.
     try  {
-      // To get the initial server port (Coordinator Port)
-      int serverPort = Integer.valueOf(args[0]);
-      // To initialise all the participant hosts and ports.
-      Coordinator coordinator = new CoordinatorImpl(
-              Arrays.asList("localhost", "localhost", "localhost", "localhost", "localhost"),
-              Arrays.asList(serverPort+1, serverPort+2, serverPort+3, serverPort+4, serverPort+5)
-      );
-      Registry coordinatorRegistry = LocateRegistry.createRegistry(serverPort);
-      coordinatorRegistry.bind("Coordinator", coordinator);
-      System.out.println("Coordinator is listening on port " + serverPort);
+      int numServers = 5; // Total number of servers
+      int basePort = portNumber; // Starting port number
+      AbstractServerFunctionClass[] servers = new AbstractServerFunctionClass[numServers];
 
-      // Start the participants
-      for (int i = 0; i < 5; i++) {
-        RMIServer participant = new AbstractServerFunctionClass("localhost", serverPort);
-        int port = serverPort + i+1;
-        Registry participantRegistry = LocateRegistry.createRegistry(port);
-        participantRegistry.bind("RMIServer", participant);
-        participant.connectToCoordinator();
-        System.out.println("Participant is listening on port " + port);
+      // Create and bind servers
+      for (int serverId = 0; serverId < numServers; serverId++) {
+        int port = basePort + serverId; // Increment port for each server
+
+        // Create server instance
+        servers[serverId] = new AbstractServerFunctionClass(port, numServers, basePort);
+
+        // Bind the server to the RMI registry
+        RMIServer skeleton = (RMIServer) UnicastRemoteObject.exportObject(servers[serverId],port);
+        Registry registry = LocateRegistry.createRegistry(port);
+        registry.rebind("RMIServer"+port, skeleton);
+
+        System.out.println("Server " + (serverId+1) + " is ready at port " + port);
       }
-      coordinator.connectParticipants();
-      System.out.println("Servers ready ");
+
     }catch (Exception e) {
       e.printStackTrace();
     }
+
   }
 }

@@ -1,3 +1,4 @@
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -5,7 +6,7 @@ import java.rmi.RemoteException;
  * An RMI interface containing the methods to be implemented by the server and to be exposed to the
  * client through a remote object.
  */
-public interface RMIServer extends Remote{
+public interface RMIServer extends Remote, AcceptorInterface, LearnerInterface, ProposerInterface{
   /**
    * Fundamental operation to put a value in the hashmap.
    * @param key key of the pair.
@@ -41,17 +42,6 @@ public interface RMIServer extends Remote{
   String deleteOperation(String key, String clientAddress, String clientPort) throws RemoteException;
 
   /**
-   * Helper method to perform the get operation for a given server instance.
-   * @param key to be used for the get operation.
-   * @param clientAddress
-   * @param clientPort
-   * @param getFlag flag used to denoted if used for TPC protocol or not.
-   * @return the value of the key if present.
-   * @throws RemoteException
-   */
-  String getOperation( String key, String clientAddress, String clientPort, boolean getFlag) throws RemoteException;
-
-  /**
    * Helper method to perform the put operation for a given server instance.
    * @param key to be inserted in the hashmap.
    * @param clientAddress
@@ -80,43 +70,5 @@ public interface RMIServer extends Remote{
    * @throws RemoteException
    */
   String checkTimeOut(long startTime, long endTime) throws RemoteException;
-
-  /**
-   * Method to prepare the participant for committing a transaction.
-   * @param clientMessage
-   * @param serverResponse
-   * @param clientAddress
-   * @param clientPort
-   * @return if the given participant can commit the transaction.
-   * @throws RemoteException
-   */
-  boolean prepare(String clientMessage, String serverResponse, String clientAddress, String clientPort) throws RemoteException;
-
-  /**
-   * Method to committing a given transaction in a participant.
-   * @param clientMessage
-   * @param serverResponse
-   * @param clientAddress
-   * @param clientPort
-   * @return the participant response.
-   * @throws RemoteException
-   */
-  String commit(String clientMessage, String serverResponse, String clientAddress, String clientPort) throws RemoteException;
-
-  /**
-   * Method to connect each participant to the coordinator.
-   * @throws RemoteException
-   */
-  void connectToCoordinator() throws RemoteException;
-
-  /**
-   * Method which starts the Two Phase Commit Protocol and is exposed to client to initiate a given transaction.
-   * @param clientMessage
-   * @param serverResponse
-   * @param clientAddress
-   * @param clientPort
-   * @return the server response.
-   * @throws RemoteException
-   */
-  String perform(String clientMessage, String serverResponse, String clientAddress, String clientPort) throws RemoteException;
+  String getResponse() throws RemoteException;
 }
